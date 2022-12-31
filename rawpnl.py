@@ -1,3 +1,9 @@
+# Set the current tax year here:
+yr = "2022"
+
+# Set the csv import filename here:
+file_name = 'loot.csv'
+
 proceeds = 0
 cb = 0
 
@@ -33,7 +39,7 @@ def handleSell(order, cbq):
 		print('To bought order')
 		boughtOrder.print()
 		if boughtOrder.amount >= toSell:
-			if order.year == '2021\n':
+			if order.year == yr + '\n' or order.year == yr:
 				pl += sell(toSell, boughtOrder, order)
 				cb += cost_basis(toSell, boughtOrder, order)
 				proceeds += proceed(toSell, boughtOrder, order)
@@ -43,17 +49,19 @@ def handleSell(order, cbq):
 			boughtOrder.print()
 			toSell = 0
 		else:
-			if order.year == '2021\n':
+			if order.year == yr + '\n' or order.year == yr:
 				pl += sell(boughtOrder.amount, boughtOrder, order)
 				cb += cost_basis(boughtOrder.amount, boughtOrder, order)
 				proceeds += proceed(boughtOrder.amount, boughtOrder, order)
 			toSell -= boughtOrder.amount
+			toSell = round(toSell, 6)
 			print('Full sale of bought order')
+			print("processing ")
 	print('Total pl from sale: ' + str(pl))
 	return pl
 
 
-f = open('btctx.csv', 'r')
+f = open(file_name, 'r')
 lines = f.readlines()
 f.close()
 
@@ -69,6 +77,8 @@ pl = 0
 
 # Calculate P&L from these orders
 for order in orders:
+	print('processing order')
+	order.print()
 	# If order is buy, insert into queue
 	if order.type == 'buy':
 		cbq.append(order)
@@ -80,3 +90,6 @@ print('Final PNL: ' + str(pl))
 
 print('Proceeds: ' + str(proceeds))
 print('Cost Basis: ' + str(cb))
+print('Cost Basis Queue: ')
+for order in cbq:
+	order.print()
